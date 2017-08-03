@@ -27,7 +27,8 @@ func initApp() {
 	if !config.PrestConf.Debug {
 		MiddlewareStack = append(MiddlewareStack, middlewares.JwtMiddleware(config.PrestConf.JWTKey))
 	}
-	if config.PrestConf.CORSAllowOrigin != nil {
+	// Viper dumb
+	if config.PrestConf.CORSAllowOrigin[0] != "false" {
 		MiddlewareStack = append(MiddlewareStack, middlewares.Cors(config.PrestConf.CORSAllowOrigin))
 	}
 	app = negroni.New(MiddlewareStack...)
