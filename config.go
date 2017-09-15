@@ -43,13 +43,11 @@ type Prest struct {
 	CORSAllowOrigin  []string
 	CORSAllowHeaders []string
 	Debug            bool
+	Adapter          adapters.Adapter
 }
 
 // PrestConf config variable
 var PrestConf *Prest
-
-// Adapter adapter variable
-var Adapter adapters.Adapter
 
 func viperCfg() {
 	filePath := getDefaultPrestConf(os.Getenv("PREST_CONF"))
