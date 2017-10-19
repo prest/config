@@ -57,7 +57,7 @@ func TestParse(t *testing.T) {
 
 	os.Setenv("PREST_CONF", "")
 	os.Setenv("PREST_HTTP_PORT", "4000")
-	os.Setenv("PREST_ENABLE_DEFAULT_JWT", "false")
+	os.Setenv("PREST_JWT_DEFAULT", "false")
 	viperCfg()
 	cfg = &Prest{}
 	err = Parse(cfg)
