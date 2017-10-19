@@ -66,7 +66,7 @@ func viperCfg() {
 	viper.SetDefault("pg.maxopenconn", 10)
 	viper.SetDefault("pg.conntimeout", 10)
 	viper.SetDefault("debug", false)
-	viper.SetDefault("enable.default.jwt", true)
+	viper.SetDefault("jwt.default", true)
 	viper.SetDefault("cors.allowheaders", []string{"*"})
 
 	user, err := user.Current()
@@ -111,7 +111,7 @@ func Parse(cfg *Prest) (err error) {
 	cfg.CORSAllowOrigin = viper.GetStringSlice("cors.alloworigin")
 	cfg.CORSAllowHeaders = viper.GetStringSlice("cors.allowheaders")
 	cfg.Debug = viper.GetBool("debug")
-	cfg.EnableDefaultJWT = viper.GetBool("enable.default.jwt")
+	cfg.EnableDefaultJWT = viper.GetBool("jwt.default")
 
 	var t []TablesConf
 	err = viper.UnmarshalKey("access.tables", &t)
