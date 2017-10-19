@@ -66,7 +66,6 @@ func viperCfg() {
 	viper.SetDefault("pg.maxopenconn", 10)
 	viper.SetDefault("pg.conntimeout", 10)
 	viper.SetDefault("debug", false)
-	viper.SetDefault("debug", false)
 	viper.SetDefault("enable.default.jwt", true)
 	viper.SetDefault("cors.allowheaders", []string{"*"})
 
