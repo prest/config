@@ -91,12 +91,17 @@ func TestParse(t *testing.T) {
 
 func TestGetDefaultPrestConf(t *testing.T) {
 	prestConf := ""
-	if conf := getDefaultPrestConf(prestConf); conf != "./prest.toml" {
-		t.Errorf("expected ./prest.toml, but got: %q", conf)
+	if conf := getDefaultPrestConf(prestConf); conf != "" {
+		t.Errorf("expected empty, but got: %q", conf)
 	}
 
 	prestConf = "../prest.toml"
 	if conf := getDefaultPrestConf(prestConf); conf != "../prest.toml" {
 		t.Errorf("expected ../prest.toml, but got: %q", conf)
+	}
+	defaultFile = "./testdata/prest.toml"
+	prestConf = ""
+	if conf := getDefaultPrestConf(prestConf); conf != "./testdata/prest.toml" {
+		t.Errorf("expected ./testdata/prest.toml, but got: %q", conf)
 	}
 }

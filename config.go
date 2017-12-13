@@ -59,6 +59,8 @@ var PrestConf *Prest
 
 var configFile string
 
+var defaultFile = "./prest.toml"
+
 func viperCfg() {
 	configFile = getDefaultPrestConf(os.Getenv("PREST_CONF"))
 
@@ -92,16 +94,20 @@ func viperCfg() {
 	viper.SetDefault("queries.location", filepath.Join(user.HomeDir, "queries"))
 }
 
-func getDefaultPrestConf(prestConf string) string {
+func getDefaultPrestConf(prestConf string) (cfg string) {
+	cfg = prestConf
 	if prestConf == "" {
-		return "./prest.toml"
+		cfg = defaultFile
+		_, err := os.Stat(cfg)
+		if err != nil {
+			cfg = ""
+		}
 	}
-	return prestConf
+	return
 }
 
 // Parse pREST config
 func Parse(cfg *Prest) (err error) {
-
 	if configFile != "" {
 		log.Printf("Using %s config file.\n", configFile)
 	}
@@ -109,13 +115,10 @@ func Parse(cfg *Prest) (err error) {
 	if err != nil {
 		switch err.(type) {
 		case viper.ConfigFileNotFoundError:
-
 			if configFile != "" {
 				log.Fatal(fmt.Sprintf("File %s not found. Aborting.\n", configFile))
 			}
-
 			log.Warningln("Config file not found. Running without config file.")
-
 		default:
 			return
 		}
