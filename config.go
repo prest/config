@@ -54,12 +54,14 @@ type Prest struct {
 	EnableCache      bool
 }
 
-// PrestConf config variable
-var PrestConf *Prest
+var (
+	// PrestConf config variable
+	PrestConf *Prest
 
-var configFile string
+	configFile string
 
-var defaultFile = "./prest.toml"
+	defaultFile = "./prest.toml"
+)
 
 func viperCfg() {
 	configFile = getDefaultPrestConf(os.Getenv("PREST_CONF"))
