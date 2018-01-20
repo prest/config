@@ -78,6 +78,7 @@ func viperCfg() {
 	viper.AddConfigPath(dir)
 	viper.SetConfigName(file)
 	viper.SetConfigType("toml")
+	viper.SetDefault("http.host", "0.0.0.0")
 	viper.SetDefault("http.port", 3000)
 	viper.SetDefault("pg.host", "127.0.0.1")
 	viper.SetDefault("pg.port", 5432)
@@ -131,6 +132,7 @@ func Parse(cfg *Prest) (err error) {
 			return
 		}
 	}
+	cfg.HTTPHost = viper.GetInt("http.host")
 	cfg.HTTPPort = viper.GetInt("http.port")
 	cfg.PGHost = viper.GetString("pg.host")
 	cfg.PGPort = viper.GetInt("pg.port")
