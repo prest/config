@@ -27,8 +27,8 @@ type AccessConf struct {
 
 // Prest basic config
 type Prest struct {
-	// HTTPPort Declare which http port the PREST used
-	HTTPPort         int
+	HTTPHost         string  // HTTPHost Declare which http address the PREST used
+	HTTPPort         int     // HTTPPort Declare which http port the PREST used
 	PGHost           string
 	PGPort           int
 	PGUser           string
