@@ -132,7 +132,7 @@ func Parse(cfg *Prest) (err error) {
 			return
 		}
 	}
-	cfg.HTTPHost = viper.GetInt("http.host")
+	cfg.HTTPHost = viper.GetString("http.host")
 	cfg.HTTPPort = viper.GetInt("http.port")
 	cfg.PGHost = viper.GetString("pg.host")
 	cfg.PGPort = viper.GetInt("pg.port")
