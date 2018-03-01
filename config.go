@@ -27,8 +27,8 @@ type AccessConf struct {
 
 // Prest basic config
 type Prest struct {
-	HTTPHost         string  // HTTPHost Declare which http address the PREST used
-	HTTPPort         int     // HTTPPort Declare which http port the PREST used
+	HTTPHost         string // HTTPHost Declare which http address the PREST used
+	HTTPPort         int    // HTTPPort Declare which http port the PREST used
 	PGHost           string
 	PGPort           int
 	PGUser           string
@@ -43,6 +43,7 @@ type Prest struct {
 	PGMAxOpenConn    int
 	PGConnTimeout    int
 	JWTKey           string
+	JWTWhiteList     []string
 	MigrationsPath   string
 	QueriesPath      string
 	AccessConf       AccessConf
@@ -147,6 +148,7 @@ func Parse(cfg *Prest) (err error) {
 	cfg.PGMAxOpenConn = viper.GetInt("pg.maxopenconn")
 	cfg.PGConnTimeout = viper.GetInt("pg.conntimeout")
 	cfg.JWTKey = viper.GetString("jwt.key")
+	cfg.JWTWhiteList = viper.GetStringSlice("jwt.whitelist")
 	cfg.MigrationsPath = viper.GetString("migrations")
 	cfg.AccessConf.Restrict = viper.GetBool("access.restrict")
 	cfg.QueriesPath = viper.GetString("queries.location")
