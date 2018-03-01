@@ -2,6 +2,7 @@
 
 # [jwt]
 # key = "mysecretkey"
+# whitelist = ["\/auth"]
 
 [http]
 port = 6000
