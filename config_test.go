@@ -170,4 +170,13 @@ func TestDatabaseURL(t *testing.T) {
 		t.Errorf("expected database ssl mode: disable, got: %s", cfg.SSLMode)
 	}
 
+	os.Setenv("DATABASE_URL", "postgresql://user:pass@localhost:5432/mydatabase/?sslmode=disable")
+	cfg = &Prest{}
+	err = Parse(cfg)
+	if err != nil {
+		t.Errorf("expected no errors, but got %v", err)
+	}
+	if cfg.PGPort != 5432 {
+		t.Errorf("expected database port: 5432, got: %d", cfg.PGPort)
+	}
 }
