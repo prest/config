@@ -2,9 +2,11 @@ package config
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"os/user"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/nuveo/log"
@@ -34,6 +36,7 @@ type Prest struct {
 	PGUser           string
 	PGPass           string
 	PGDatabase       string
+	PGURL            string
 	ContextPath      string
 	SSLMode          string
 	SSLCert          string
@@ -132,6 +135,7 @@ func Parse(cfg *Prest) (err error) {
 	}
 	cfg.HTTPHost = viper.GetString("http.host")
 	cfg.HTTPPort = viper.GetInt("http.port")
+	cfg.PGURL = viper.GetString("pg.url")
 	cfg.PGHost = viper.GetString("pg.host")
 	cfg.PGPort = viper.GetInt("pg.port")
 	cfg.PGUser = viper.GetString("pg.user")
@@ -141,6 +145,31 @@ func Parse(cfg *Prest) (err error) {
 	cfg.SSLCert = viper.GetString("ssl.cert")
 	cfg.SSLKey = viper.GetString("ssl.key")
 	cfg.SSLRootCert = viper.GetString("ssl.rootcert")
+	fmt.Println("here:", cfg.PGURL)
+	if cfg.PGURL != "" {
+		// Parser PG URL, get database connection via string URL
+		u, err := url.Parse(cfg.PGURL)
+		if err != nil {
+			return err
+		}
+		cfg.PGHost = u.Hostname()
+		if u.Port() != "" {
+			pgPort, err := strconv.Atoi(u.Port())
+			if err != nil {
+				return err
+			}
+			cfg.PGPort = pgPort
+		}
+		cfg.PGUser = u.User.Username()
+		pgPass, pgPassExist := u.User.Password()
+		if pgPassExist {
+			cfg.PGPass = pgPass
+		}
+		cfg.PGDatabase = strings.Replace(u.Path, "/", "", -1)
+		if len(u.Query()["sslmode"]) > 0 {
+			cfg.SSLMode = u.Query()["sslmode"][0]
+		}
+	}
 	cfg.PGMaxIdleConn = viper.GetInt("pg.maxidleconn")
 	cfg.PGMAxOpenConn = viper.GetInt("pg.maxopenconn")
 	cfg.PGConnTimeout = viper.GetInt("pg.conntimeout")
