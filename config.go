@@ -169,8 +169,8 @@ func Parse(cfg *Prest) (err error) {
 			cfg.PGPass = pgPass
 		}
 		cfg.PGDatabase = strings.Replace(u.Path, "/", "", -1)
-		if len(u.Query()["sslmode"]) > 0 {
-			cfg.SSLMode = u.Query()["sslmode"][0]
+		if u.Query().Get("sslmode") != "" {
+			cfg.SSLMode = u.Query().Get("sslmode")
 		}
 	}
 	cfg.PGMaxIdleConn = viper.GetInt("pg.maxidleconn")
