@@ -151,9 +151,10 @@ func Parse(cfg *Prest) (err error) {
 	}
 	if cfg.PGURL != "" {
 		// Parser PG URL, get database connection via string URL
-		u, err := url.Parse(cfg.PGURL)
-		if err != nil {
-			return err
+		u, errPerse := url.Parse(cfg.PGURL)
+		if errPerse != nil {
+			err = errPerse
+			return
 		}
 		cfg.PGHost = u.Hostname()
 		if u.Port() != "" {
@@ -190,15 +191,12 @@ func Parse(cfg *Prest) (err error) {
 	cfg.HTTPSMode = viper.GetBool("https.mode")
 	cfg.HTTPSCert = viper.GetString("https.cert")
 	cfg.HTTPSKey = viper.GetString("https.key")
-
 	var t []TablesConf
 	err = viper.UnmarshalKey("access.tables", &t)
 	if err != nil {
-		return err
+		return
 	}
-
 	cfg.AccessConf.Tables = t
-
 	return
 }
 
