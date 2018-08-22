@@ -101,7 +101,8 @@ func viperCfg() {
 	viper.SetDefault("https.key", "/etc/certs/cert.key")
 	hDir, err := homedir.Dir()
 	if err != nil {
-		log.Errorln(err)
+		log.Fatal(err)
+
 	}
 	viper.SetDefault("queries.location", filepath.Join(hDir, "queries"))
 }
