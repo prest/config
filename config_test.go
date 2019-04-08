@@ -217,3 +217,25 @@ func TestHTTPPort(t *testing.T) {
 		t.Errorf("expected http port: 3000, got: %d", cfg.HTTPPort)
 	}
 }
+
+func Test_parseDatabaseURL(t *testing.T) {
+	c := &Prest{PGURL: "postgresql://user:pass@localhost:5432/mydatabase/?sslmode=require"}
+	if err := parseDatabaseURL(c); err != nil {
+		t.Errorf("expected no errors, but got %v", err)
+	}
+	if c.PGDatabase != "mydatabase" {
+		t.Errorf("expected database name: mydatabase, got: %s", c.PGDatabase)
+	}
+	if c.PGPort != 5432 {
+		t.Errorf("expected database port: 5432, got: %d", c.PGPort)
+	}
+	if c.PGUser != "user" {
+		t.Errorf("expected database user: user, got: %s", c.PGUser)
+	}
+	if c.PGPass != "pass" {
+		t.Errorf("expected database password: password, got: %s", c.PGPass)
+	}
+	if c.SSLMode != "require" {
+		t.Errorf("expected database SSL mode: require, got: %s", c.SSLMode)
+	}
+}
