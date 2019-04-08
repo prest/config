@@ -142,15 +142,14 @@ func TestGetDefaultPrestConf(t *testing.T) {
 }
 
 func TestDatabaseURL(t *testing.T) {
-	os.Setenv("PREST_CONF", "")
 	os.Setenv("PREST_PG_URL", "postgresql://user:pass@localhost:1234/mydatabase/?sslmode=disable")
+
 	viperCfg()
 	cfg := &Prest{}
 	err := Parse(cfg)
 	if err != nil {
 		t.Errorf("expected no errors, but got %v", err)
 	}
-
 	if cfg.PGDatabase != "mydatabase" {
 		t.Errorf("expected database name: mydatabase, got: %s", cfg.PGDatabase)
 	}
@@ -170,7 +169,9 @@ func TestDatabaseURL(t *testing.T) {
 		t.Errorf("expected database ssl mode: disable, got: %s", cfg.SSLMode)
 	}
 
-	os.Setenv("DATABASE_URL", "postgresql://user:pass@localhost:5432/mydatabase/?sslmode=disable")
+	os.Unsetenv("PREST_PG_URL")
+	os.Setenv("DATABASE_URL", "postgresql://cloud:cloudPass@localhost:5432/CloudDatabase/?sslmode=disable")
+
 	cfg = &Prest{}
 	err = Parse(cfg)
 	if err != nil {
@@ -179,6 +180,17 @@ func TestDatabaseURL(t *testing.T) {
 	if cfg.PGPort != 5432 {
 		t.Errorf("expected database port: 5432, got: %d", cfg.PGPort)
 	}
+	if cfg.PGUser != "cloud" {
+		t.Errorf("expected database user: cloud, got: %s", cfg.PGUser)
+	}
+	if cfg.PGPass != "cloudPass" {
+		t.Errorf("expected database password: cloudPass, got: %s", cfg.PGPass)
+	}
+	if cfg.SSLMode != "disable" {
+		t.Errorf("expected database SSL mode: disable, got: %s", cfg.SSLMode)
+	}
+
+	os.Unsetenv("DATABASE_URL")
 }
 
 func TestHTTPPort(t *testing.T) {
