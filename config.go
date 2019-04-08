@@ -166,10 +166,9 @@ func Parse(cfg *Prest) (err error) {
 		}
 		cfg.PGHost = u.Hostname()
 		if u.Port() != "" {
-			pgPort, PortErr := strconv.Atoi(u.Port())
-			if err != nil {
-				err = PortErr
-				return
+			pgPort, portErr := strconv.Atoi(u.Port())
+			if portErr != nil {
+				return portErr
 			}
 			cfg.PGPort = pgPort
 		}
