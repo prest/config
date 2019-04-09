@@ -146,10 +146,9 @@ func Parse(cfg *Prest) (err error) {
 	cfg.SSLRootCert = viper.GetString("ssl.rootcert")
 	if os.Getenv("PORT") != "" {
 		// cloud factor support: https://help.heroku.com/PPBPA231/how-do-i-use-the-port-environment-variable-in-container-based-apps
-		HTTPPort, HttpPortErr := strconv.Atoi(os.Getenv("PORT"))
-		if err != nil {
-			err = HttpPortErr
-			return
+		HTTPPort, HTTPPortErr := strconv.Atoi(os.Getenv("PORT"))
+		if HTTPPortErr != nil {
+			return HTTPPortErr
 		}
 		cfg.HTTPPort = HTTPPort
 	}
