@@ -211,7 +211,7 @@ func TestHTTPPort(t *testing.T) {
 	if err != nil {
 		t.Errorf("expected no errors, but got %v", err)
 	}
-	if cfg.HTTPPort != 8080 {
+	if cfg.HTTPPort != 3000 {
 		t.Errorf("expected http port: 8080, got: %d", cfg.HTTPPort)
 	}
 

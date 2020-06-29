@@ -134,33 +134,30 @@ func Parse(cfg *Prest) (err error) {
 	}
 	cfg.HTTPHost = viper.GetString("http.host")
 	cfg.HTTPPort = viper.GetInt("http.port")
+	err = httpFromEnv(cfg)
+	if err != nil {
+		return
+	}
 	cfg.PGURL = viper.GetString("pg.url")
 	cfg.PGHost = viper.GetString("pg.host")
 	cfg.PGPort = viper.GetInt("pg.port")
 	cfg.PGUser = viper.GetString("pg.user")
 	cfg.PGPass = viper.GetString("pg.pass")
 	cfg.PGDatabase = viper.GetString("pg.database")
+	err = postgresFromEnv(cfg)
+	if err != nil {
+		return
+	}
 	cfg.SSLMode = viper.GetString("ssl.mode")
 	cfg.SSLCert = viper.GetString("ssl.cert")
 	cfg.SSLKey = viper.GetString("ssl.key")
 	cfg.SSLRootCert = viper.GetString("ssl.rootcert")
-	err = portFromEnv(cfg)
-	if err != nil {
-		return
-	}
-	if os.Getenv("DATABASE_URL") != "" {
-		// cloud factor support: https://devcenter.heroku.com/changelog-items/438
-		cfg.PGURL = os.Getenv("DATABASE_URL")
-	}
-	err = parseDatabaseURL(cfg)
-	if err != nil {
-		return
-	}
 	cfg.PGMaxIdleConn = viper.GetInt("pg.maxidleconn")
 	cfg.PGMAxOpenConn = viper.GetInt("pg.maxopenconn")
 	cfg.PGConnTimeout = viper.GetInt("pg.conntimeout")
 	cfg.JWTKey = viper.GetString("jwt.key")
 	cfg.JWTAlgo = viper.GetString("jwt.algo")
+	jwtFromEnv(cfg)
 	cfg.MigrationsPath = viper.GetString("migrations")
 	cfg.AccessConf.Restrict = viper.GetBool("access.restrict")
 	cfg.QueriesPath = viper.GetString("queries.location")
@@ -198,6 +195,56 @@ func Load() {
 	}
 }
 
+func postgresFromEnv(cfg *Prest) (err error) {
+	// rewrite all pg config
+	if pgURL, ok := os.LookupEnv("PREST_PG_URL"); ok {
+		cfg.PGURL = pgURL
+		return parseDatabaseURL(cfg)
+	}
+	// rewrite all pg config
+	if pgURL, ok := os.LookupEnv("DATABASE_URL"); ok {
+		// cloud factor support: https://devcenter.heroku.com/changelog-items/438
+		cfg.PGURL = pgURL
+		return parseDatabaseURL(cfg)
+	}
+	// rewrite pg host
+	if pgHost, ok := os.LookupEnv("PREST_PG_HOST"); ok {
+		cfg.PGHost = pgHost
+	}
+	// rewrite pg user
+	if pgUser, ok := os.LookupEnv("PREST_PG_USER"); ok {
+		cfg.PGUser = pgUser
+	}
+	// rewrite pg pass
+	if pgPass, ok := os.LookupEnv("PREST_PG_PASS"); ok {
+		cfg.PGPass = pgPass
+	}
+	// rewrite pg database
+	if pgDatabase, ok := os.LookupEnv("PREST_PG_DATABASE"); ok {
+		cfg.PGDatabase = pgDatabase
+	}
+	// rewrite pg port
+	if pgPort, ok := os.LookupEnv("PREST_PG_PORT"); ok {
+		PGPort, err := strconv.Atoi(pgPort)
+		if err != nil {
+			return err
+		}
+		cfg.PGPort = PGPort
+	}
+	return
+}
+
+func jwtFromEnv(cfg *Prest) {
+	// rewrite jwt key
+	if jwtKey, ok := os.LookupEnv("PREST_JWT_KEY"); ok {
+		cfg.JWTKey = jwtKey
+	}
+	// rewrite jwt algo
+	if jwtAlgo, ok := os.LookupEnv("PREST_JWT_ALGO"); ok {
+		cfg.JWTAlgo = jwtAlgo
+	}
+}
+
 func parseDatabaseURL(cfg *Prest) (err error) {
 	if cfg.PGURL == "" {
 		return
@@ -228,15 +275,23 @@ func parseDatabaseURL(cfg *Prest) (err error) {
 	return
 }
 
-func portFromEnv(cfg *Prest) (err error) {
-	if os.Getenv("PORT") == "" {
-		return
+func httpFromEnv(cfg *Prest) (err error) {
+	if httpHost, ok := os.LookupEnv("PREST_HTTP_HOST"); ok {
+		cfg.HTTPHost = httpHost
 	}
-	// cloud factor support: https://help.heroku.com/PPBPA231/how-do-i-use-the-port-environment-variable-in-container-based-apps
-	HTTPPort, err := strconv.Atoi(os.Getenv("PORT"))
-	if err != nil {
-		return
+	if httpPort, ok := os.LookupEnv("PREST_HTTP_PORT"); ok {
+		HTTPPort, err := strconv.Atoi(httpPort)
+		if err != nil {
+			return err
+		}
+		cfg.HTTPPort = HTTPPort
+	} else if port, ok := os.LookupEnv("PORT"); ok {
+		// cloud factor support: https://help.heroku.com/PPBPA231/how-do-i-use-the-port-environment-variable-in-container-based-apps
+		HTTPPort, err := strconv.Atoi(port)
+		if err != nil {
+			return err
+		}
+		cfg.HTTPPort = HTTPPort
 	}
-	cfg.HTTPPort = HTTPPort
 	return
 }
