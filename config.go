@@ -197,35 +197,35 @@ func Load() {
 
 func postgresFromEnv(cfg *Prest) (err error) {
 	// rewrite all pg config
-	if os.Getenv("PREST_PG_URL") != "" {
-		cfg.PGURL = os.Getenv("PREST_PG_URL")
+	if pgURL, ok := os.LookupEnv("PREST_PG_URL"); ok {
+		cfg.PGURL = pgURL
 		return parseDatabaseURL(cfg)
 	}
 	// rewrite all pg config
-	if os.Getenv("DATABASE_URL") != "" {
+	if pgURL, ok := os.LookupEnv("DATABASE_URL"); ok {
 		// cloud factor support: https://devcenter.heroku.com/changelog-items/438
-		cfg.PGURL = os.Getenv("DATABASE_URL")
+		cfg.PGURL = pgURL
 		return parseDatabaseURL(cfg)
 	}
 	// rewrite pg host
-	if os.Getenv("PREST_PG_HOST") != "" {
-		cfg.PGHost = os.Getenv("PREST_PG_HOST")
+	if pgHost, ok := os.LookupEnv("PREST_PG_HOST"); ok {
+		cfg.PGHost = pgHost
 	}
 	// rewrite pg user
-	if os.Getenv("PREST_PG_USER") != "" {
-		cfg.PGUser = os.Getenv("PREST_PG_USER")
+	if pgUser, ok := os.LookupEnv("PREST_PG_USER"); ok {
+		cfg.PGUser = pgUser
 	}
 	// rewrite pg pass
-	if os.Getenv("PREST_PG_PASS") != "" {
-		cfg.PGPass = os.Getenv("PREST_PG_PASS")
+	if pgPass, ok := os.LookupEnv("PREST_PG_PASS"); ok {
+		cfg.PGPass = pgPass
 	}
 	// rewrite pg database
-	if os.Getenv("PREST_PG_DATABASE") != "" {
-		cfg.PGDatabase = os.Getenv("PREST_PG_DATABASE")
+	if pgDatabase, ok := os.LookupEnv("PREST_PG_DATABASE"); ok {
+		cfg.PGDatabase = pgDatabase
 	}
 	// rewrite pg port
-	if os.Getenv("PREST_PG_PORT") != "" {
-		PGPort, err := strconv.Atoi(os.Getenv("PREST_PG_PORT"))
+	if pgPort, ok := os.LookupEnv("PREST_PG_PORT"); ok {
+		PGPort, err := strconv.Atoi(pgPort)
 		if err != nil {
 			return err
 		}
@@ -236,12 +236,12 @@ func postgresFromEnv(cfg *Prest) (err error) {
 
 func jwtFromEnv(cfg *Prest) {
 	// rewrite jwt key
-	if os.Getenv("PREST_JWT_KEY") != "" {
-		cfg.JWTKey = os.Getenv("PREST_JWT_KEY")
+	if jwtKey, ok := os.LookupEnv("PREST_JWT_KEY"); ok {
+		cfg.JWTKey = jwtKey
 	}
 	// rewrite jwt algo
-	if os.Getenv("PREST_JWT_ALGO") != "" {
-		cfg.JWTAlgo = os.Getenv("PREST_JWT_ALGO")
+	if jwtAlgo, ok := os.LookupEnv("PREST_JWT_ALGO"); ok {
+		cfg.JWTAlgo = jwtAlgo
 	}
 }
 
@@ -276,18 +276,18 @@ func parseDatabaseURL(cfg *Prest) (err error) {
 }
 
 func httpFromEnv(cfg *Prest) (err error) {
-	if os.Getenv("PREST_HTTP_HOST") != "" {
-		cfg.HTTPHost = os.Getenv("PREST_HTTP_HOST")
+	if httpHost, ok := os.LookupEnv("PREST_HTTP_HOST"); ok {
+		cfg.HTTPHost = httpHost
 	}
-	if os.Getenv("PREST_HTTP_PORT") != "" {
-		HTTPPort, err := strconv.Atoi(os.Getenv("PREST_HTTP_PORT"))
+	if httpPort, ok := os.LookupEnv("PREST_HTTP_PORT"); ok {
+		HTTPPort, err := strconv.Atoi(httpPort)
 		if err != nil {
 			return err
 		}
 		cfg.HTTPPort = HTTPPort
-	} else if os.Getenv("PORT") != "" {
+	} else if port, ok := os.LookupEnv("PORT"); ok {
 		// cloud factor support: https://help.heroku.com/PPBPA231/how-do-i-use-the-port-environment-variable-in-container-based-apps
-		HTTPPort, err := strconv.Atoi(os.Getenv("PORT"))
+		HTTPPort, err := strconv.Atoi(port)
 		if err != nil {
 			return err
 		}
